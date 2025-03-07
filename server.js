@@ -68,7 +68,6 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
         const userQuery = `SELECT * FROM users WHERE username = ?`;
         const dbUser = await db.get(userQuery, [username]);
