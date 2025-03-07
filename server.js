@@ -76,7 +76,7 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid Username or Password' });
         }
 
-        const { user_id } = dbUser; // Fix destructuring
+        const { user_Id } = dbUser; // Fix destructuring
 
         const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
 
@@ -84,7 +84,7 @@ app.post('/login', async (req, res) => {
             const payload = { username: username };
             const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN");
             
-            return res.status(200).json({ jwtToken, userId: user_id }); // Correct case
+            return res.status(200).json({ jwtToken, userId:dbUser.user_Id }); // Correct case
         } else {
             return res.status(401).json({ error: 'Invalid Username or Password' });
         }
