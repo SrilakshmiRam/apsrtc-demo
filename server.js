@@ -70,26 +70,22 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // Correct SQL query syntax
         const userQuery = `SELECT * FROM users WHERE username = ?`;
-        
-        // Use db.get() to fetch a single user
         const dbUser = await db.get(userQuery, [username]);
 
-        // If user not found, send 401 error
         if (!dbUser) {
             return res.status(401).json({ error: 'Invalid Username or Password' });
         }
 
-        // Compare the input password with the stored hashed password
+        const { user_id } = dbUser; // Fix destructuring
+
         const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
 
         if (isPasswordMatched) {
-            const payload = {
-                username: username,
-              };
-              const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN"); // Optional: Token expiry time
-            return res.status(200).json({ jwtToken });
+            const payload = { username: username };
+            const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN");
+            
+            return res.status(200).json({ jwtToken, userId: user_id }); // Correct case
         } else {
             return res.status(401).json({ error: 'Invalid Username or Password' });
         }
@@ -98,6 +94,7 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
 
