@@ -137,3 +137,33 @@ app.get('/employees', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' }); // Fixed JSON format
     }
 });
+
+
+
+app.post("/employee-login", async (req, res) => {
+    const { empId, password } = req.body;
+    try {
+        const employeeQuery = `SELECT * FROM employee WHERE employee_id = ?`;
+        const employee = await db.get(employeeQuery, [empId]);
+
+        if (!employee) {
+            return res.status(401).json({ error: "Invalid Employee ID" });
+        }
+
+        const isPasswordMatched = await bcrypt.compare(password, employee.password);
+
+        if (isPasswordMatched) {
+            const payload = { empId };
+            const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: "1h" });
+
+            return res.status(200).json({ jwtToken, empId: employee.employee_id }); // Corrected
+        } else {
+            return res.status(401).json({ error: "Invalid Password" });
+        }
+    } catch (e) {
+        console.error("Error during login:", e);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+  
