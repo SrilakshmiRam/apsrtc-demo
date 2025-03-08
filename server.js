@@ -84,7 +84,7 @@ app.post('/login', async (req, res) => {
             const payload = { username: username };
             const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN");
             
-            return res.status(200).json({ jwtToken, userId:dbUser.user_Id }); // Correct case
+            return res.status(200).json({ jwtToken, id:dbUser.user_Id }); // Correct case
         } else {
             return res.status(401).json({ error: 'Invalid Username or Password' });
         }
@@ -155,7 +155,7 @@ app.post("/employee-login", async (req, res) => {
             const payload = { empId };
             const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: "1h" });
 
-            return res.status(200).json({ jwtToken, empId: employee.employee_id });
+            return res.status(200).json({ jwtToken, id: employee.employee_id });
         } else {
             return res.status(401).json({ error: "Invalid Password" });
         }
