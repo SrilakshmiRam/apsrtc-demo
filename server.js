@@ -31,7 +31,7 @@ const initiateAndStartDatabaseServer=async()=>{
             driver:sqlite3.Database
         })
         app.listen(4000,()=>{
-            console.log('server is running at http://localhost:3000/')
+            console.log('server is running at http://localhost:4000/')
         })
     }
     catch(e){
@@ -166,4 +166,21 @@ app.post("/employee-login", async (req, res) => {
 });
 
 
-  
+app.post('/employees/verify', async (req, res) => {
+    const { empId } = req.body;
+    
+    try {
+        const employeeQuery = `SELECT employee_id FROM employee WHERE employee_id = ?`;
+        const employee = await db.get(employeeQuery, [empId]);
+
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee ID does not exist' });
+        } 
+        
+        res.status(200).json({ message: 'Employee exists' });
+        
+    } catch (error) {
+        console.error('Error verifying employee:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
